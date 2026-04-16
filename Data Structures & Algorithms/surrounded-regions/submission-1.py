@@ -1,0 +1,40 @@
+class Solution:
+    def solve(self, board):
+        if not board:
+            return
+        
+        rows, cols = len(board), len(board[0])
+        
+        # DFS to mark safe O's
+        def dfs(r, c):
+            if r < 0 or c < 0 or r >= rows or c >= cols:
+                return
+            if board[r][c] != 'O':
+                return
+            
+            board[r][c] = 'B'  # Mark as safe
+            dfs(r+1, c)
+            dfs(r-1, c)
+            dfs(r, c+1)
+            dfs(r, c-1)
+        
+        # 1️⃣ Mark all border O's with B
+        for i in range(rows):
+            if board[i][0] == 'O': dfs(i, 0)
+            if board[i][cols-1] == 'O': dfs(i, cols-1)
+        
+        for j in range(cols):
+            if board[0][j] == 'O': dfs(0, j)
+            if board[rows-1][j] == 'O': dfs(rows-1, j)
+        
+        # 2️⃣ Convert all remaining O → X (they are surrounded)
+        for i in range(rows):
+            for j in range(cols):
+                if board[i][j] == 'O':
+                    board[i][j] = 'X'
+        
+        # 3️⃣ Convert all B → O (safe regions)
+        for i in range(rows):
+            for j in range(cols):
+                if board[i][j] == 'B':
+                    board[i][j] = 'O'
